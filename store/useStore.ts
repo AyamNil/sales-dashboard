@@ -15,6 +15,8 @@ interface TelegramConfig {
   chatId: string;
 }
 
+export type SummaryMode = "full" | "compact";
+
 interface DataState {
   // Raw data
   allRows: Row[];
@@ -33,6 +35,7 @@ interface DataState {
 
   // Telegram config (persisted)
   telegram: TelegramConfig;
+  summaryMode: SummaryMode;
 
   // Derived (computed on demand via selectors)
   filteredRows: () => Row[];
@@ -46,6 +49,7 @@ interface DataState {
   setSort: (col: keyof Row) => void;
   setTelegram: (config: Partial<TelegramConfig>) => void;
   clearTelegram: () => void;
+  setSummaryMode: (mode: SummaryMode) => void;
 }
 
 function defaultFilters(): Filters {
@@ -65,6 +69,7 @@ export const useStore = create<DataState>()(
       sortCol: "date",
       sortDir: "desc",
       telegram: { botToken: "", chatId: "" },
+      summaryMode: "full",
 
       filteredRows: () => filterRows(get().allRows, get().filters),
 
@@ -133,6 +138,7 @@ export const useStore = create<DataState>()(
         set((s) => ({ telegram: { ...s.telegram, ...config } })),
 
       clearTelegram: () => set({ telegram: { botToken: "", chatId: "" } }),
+      setSummaryMode: (mode: SummaryMode) => set({ summaryMode: mode }),
     }),
     {
       name: "sales-dashboard",
@@ -142,6 +148,7 @@ export const useStore = create<DataState>()(
         sortCol: s.sortCol,
         sortDir: s.sortDir,
         telegram: s.telegram,
+        summaryMode: s.summaryMode,
         tableSearch: s.tableSearch,
       }),
     }

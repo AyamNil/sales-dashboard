@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useStore } from "@/store/useStore";
 import { aggByKey, formatIDR } from "@/lib/data";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer,
   LineChart, Line, CartesianGrid,
 } from "recharts";
 
@@ -86,19 +86,19 @@ export default function Charts() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Penjualan per brand">
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={byBrand} layout="vertical">
-              <XAxis type="number" tickFormatter={idrTick} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-              <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11 }} tickLine={false} />
-              <Tooltip formatter={(v) => [idrLabel(v), "Net Sales"]} />
-              <Bar dataKey="value" radius={[0, 3, 3, 0]}>
-                {byBrand.map((_, i) => (
-                  <rect key={i} fill={COLORS[i % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <ChartCard title="Penjualan per brand" note={`${byBrand.length} brand · scroll untuk melihat semua`}>
+          <div className="overflow-y-auto" style={{ height: Math.max(200, byBrand.length * 38) > 360 ? 360 : Math.max(200, byBrand.length * 38) }}>
+            <ResponsiveContainer width="100%" height={Math.max(200, byBrand.length * 38)}>
+              <BarChart data={byBrand} layout="vertical" margin={{ left: 8, right: 12, top: 4, bottom: 4 }}>
+                <XAxis type="number" tickFormatter={idrTick} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="name" width={150} tick={{ fontSize: 11 }} tickLine={false} interval={0} />
+                <Tooltip formatter={(v) => [idrLabel(v), "Net Sales"]} />
+                <Bar dataKey="value" radius={[0, 3, 3, 0]}>
+                  {byBrand.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </ChartCard>
       </div>
 
